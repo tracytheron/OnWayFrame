@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="valuation">
+        <item>估价房子 1</item>
+        <item>估价房子 2</item>
+        <item>估价房子 3</item>
+        <item>估价房子 4</item>
+        <item>估价房子 5</item>
+        <item>估价房子 6</item>
+        <item>估价房子 7</item>
+    </string-array>
+    <string-array name="sale">
+        <item>出售房子 1</item>
+        <item>出售房子 2</item>
+        <item>出售房子 3</item>
+        <item>出售房子 4</item>
+        <item>出售房子 5</item>
+        <item>出售房子 6</item>
+        <item>估价房子 7</item>
+    </string-array>
+</resources>
