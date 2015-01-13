@@ -2,36 +2,30 @@ package com.offgoing.mao.aliframe.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.offgoing.mao.aliframe.R;
 import com.offgoing.mao.aliframe.entity.Note;
-import com.offgoing.mao.aliframe.ui.activity.AddNoteActivity;
 import com.offgoing.mao.aliframe.ui.activity.MainActivity;
 import com.offgoing.mao.aliframe.ui.adapter.NoteListAdapter;
 import com.offgoing.mao.aliframe.ui.base.BaseFragment;
 import com.offgoing.mao.aliframe.ui.control.DefaultControl;
+import com.offgoing.mao.aliframe.ui.control.NavigationManager;
 import com.offgoing.mao.aliframe.utils.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.listener.FindListener;
 
 /**
  * Created by Administrator on 2015/1/2.
  */
-public class NoteListFragment extends BaseFragment<DefaultControl> {
+public class NoteListFragment extends BaseFragment<DefaultControl> implements AdapterView.OnItemClickListener {
     ListView mLvList;
     private View rootView;
     private NoteListAdapter mAdapter;
@@ -40,7 +34,8 @@ public class NoteListFragment extends BaseFragment<DefaultControl> {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if(rootView==null){
             rootView = inflater.inflate(R.layout.fragment_note_list, null);
-            mLvList = ButterKnife.findById(rootView,R.id.lv_list);
+            mLvList = ButterKnife.findById(rootView, R.id.lv_list);
+            mLvList.setOnItemClickListener(this);
             mControl.getNoteList();
         }else{
             ((ViewGroup)rootView.getParent()).removeView(rootView);
@@ -65,9 +60,34 @@ public class NoteListFragment extends BaseFragment<DefaultControl> {
         switch (resultCode){
             case MainActivity.RESULT_ADD_NOTE_SUC:
                 if(data==null)return;
-                Note note = (Note)data.getSerializableExtra("note");
-                mAdapter.update(note);
+                Note addNote = (Note)data.getSerializableExtra("note");
+                mAdapter.addLastAndUpdate(addNote);
             break;
+            case MainActivity.RESULT_EDIT_NOTE_SUC:
+                if(data==null)return;
+                Note editNote = (Note)data.getSerializableExtra("note");
+                int location = getLocation(editNote);
+                if(location>=0){
+                    mAdapter.getDataList().remove(location);
+                    mAdapter.getDataList().add(location,editNote);
+                    mAdapter.notifyDataSetChanged();
+                }
+                break;
         }
+    }
+    private int getLocation(Note note){
+        if(note==null)return -1;
+        List<Note>noteList = mAdapter.getDataList();
+        for(int i = 0;i<noteList.size();i++){
+            if(noteList.get(i).equals(note)){
+               return i;
+            }
+        }
+        return -1;
+    }
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Note note = ((NoteListAdapter)parent.getAdapter()).getItem(position);
+        NavigationManager.gotEditNoteActivity(getActivity(),note);
     }
 }

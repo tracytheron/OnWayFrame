@@ -2,20 +2,14 @@ package com.offgoing.mao.aliframe.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.offgoing.mao.aliframe.R;
-import com.offgoing.mao.aliframe.constact.Global;
 import com.offgoing.mao.aliframe.entity.Note;
 import com.offgoing.mao.aliframe.ui.base.BaseActivity;
 import com.offgoing.mao.aliframe.ui.control.DefaultControl;
@@ -24,36 +18,57 @@ import com.offgoing.mao.aliframe.utils.ToastUtil;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import cn.bmob.v3.Bmob;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 
 /**
  * Created by Administrator on 2015/1/2.
  */
-public class AddNoteActivity extends BaseActivity<DefaultControl> {
+public class AddOrEditNoteActivity extends BaseActivity<DefaultControl> {
     @InjectView(R.id.et_note_content)
     EditText mEtNoteContent;
     @InjectView(R.id.bt_save)
     Button mBtSave;
     private View rootView;
-
+    private boolean isAdd = true;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_add_note);
         ButterKnife.inject(this);
-        initActionBar(true,R.string.title_activity_add_note);
+        initView();
+    }
+    private void initView(){
+        Note note = (Note)getIntent().getSerializableExtra("note");
+        if(note!=null){
+            isAdd = false;
+            initActionBar(true,R.string.title_activity_edit_note);
+            mEtNoteContent.setText(note.getContent());
+            mEtNoteContent.setSelection(note.getContent().length());
+        }else{
+            isAdd = true;
+            initActionBar(true,R.string.title_activity_add_note);
+        }
     }
     @OnClick(R.id.bt_save)
     public void onClickSave(){
         String content = mEtNoteContent.getText().toString().trim();
         if(TextUtils.isEmpty(content))return;
-        final Note note = new Note();
-        note.setContent(content);
+        if(isAdd){
+            Note note = new Note();
+            note.setContent(content);
+            addNote(note);
+        }else{
+            Note note = (Note)getIntent().getSerializableExtra("note");
+            note.setContent(content);
+            updateNote(note);
+        }
+    }
+    private void addNote(final Note note){
         note.save(this,new SaveListener() {
             @Override
             public void onSuccess() {
-                ToastUtil.showToast(AddNoteActivity.this,"save suc");
+                ToastUtil.showToast(AddOrEditNoteActivity.this,"save suc");
                 Intent intent = new Intent();
                 intent.putExtra("note",note);
                 setResult(MainActivity.RESULT_ADD_NOTE_SUC,intent);
@@ -62,7 +77,24 @@ public class AddNoteActivity extends BaseActivity<DefaultControl> {
 
             @Override
             public void onFailure(int i, String s) {
-                ToastUtil.showToast(AddNoteActivity.this,"save fail");
+                ToastUtil.showToast(AddOrEditNoteActivity.this,"save fail "+s);
+            }
+        });
+    }
+    private void updateNote(final Note note){
+        note.update(this,new UpdateListener() {
+            @Override
+            public void onSuccess() {
+                ToastUtil.showToast(AddOrEditNoteActivity.this,"update suc");
+                Intent intent = new Intent();
+                intent.putExtra("note",note);
+                setResult(MainActivity.RESULT_EDIT_NOTE_SUC,intent);
+                finish();
+            }
+
+            @Override
+            public void onFailure(int i, String s) {
+                ToastUtil.showToast(AddOrEditNoteActivity.this,"update fail "+s);
             }
         });
     }

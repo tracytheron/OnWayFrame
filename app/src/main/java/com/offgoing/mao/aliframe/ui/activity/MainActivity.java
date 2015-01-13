@@ -27,6 +27,7 @@ import butterknife.InjectView;
 
 public class MainActivity extends BaseActivity<DefaultControl> {
     public static final int RESULT_ADD_NOTE_SUC = 1;
+    public static final int RESULT_EDIT_NOTE_SUC = 2;
     @InjectView(R.id.ll_slide_menu)
     LinearLayout mLlSlideMenu;
     @InjectView(R.id.dl_main_container)

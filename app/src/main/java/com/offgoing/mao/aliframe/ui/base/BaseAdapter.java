@@ -50,7 +50,7 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter {
      * 向List追加一个实体数据 并更新
      * @param obj
      */
-    public void update(T obj){
+    public void addLastAndUpdate(T obj){
         if(mDataList==null)return;
         this.mDataList.add(obj);
         notifyDataSetChanged();

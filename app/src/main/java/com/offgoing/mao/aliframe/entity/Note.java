@@ -21,4 +21,11 @@ public class Note extends BmobObject {
     public void setContent(String content) {
         this.content = content;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o==null)return false;
+        Note note = (Note) o;
+        return note.getObjectId().equals(getObjectId());
+    }
 }
