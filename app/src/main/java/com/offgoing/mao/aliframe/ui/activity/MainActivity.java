@@ -7,16 +7,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.view.Gravity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.offgoing.mao.aliframe.R;
-import com.offgoing.mao.aliframe.ui.control.NavigationManager;
 import com.offgoing.mao.aliframe.ui.fragment.NoteListFragment;
 import com.offgoing.mao.aliframe.ui.base.BaseActivity;
 import com.offgoing.mao.aliframe.ui.control.DefaultControl;
@@ -31,9 +27,8 @@ public class MainActivity extends BaseActivity<DefaultControl> {
     @InjectView(R.id.ll_slide_menu)
     LinearLayout mLlSlideMenu;
     @InjectView(R.id.dl_main_container)
-    DrawerLayout mDlMainContainer;
+    DrawerLayout mDrawerLayout;
     ActionBarDrawerToggle mDrawerToggle;
-    protected ImageButton mIbAdd;
     private NoteListFragment mNoteListFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,26 +36,25 @@ public class MainActivity extends BaseActivity<DefaultControl> {
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
         initView();
-        addListener();
     }
 
     private void initView() {
-        initActionBar(true, R.string.app_name);
-        initDrawerToggle();
-        mDlMainContainer.setDrawerListener(mDrawerToggle);
+        //initActionBar(true, R.string.app_name);
+        //initDrawerToggle();
+
+        initActionBar();
+
         addNoteList();
-        mIbAdd = addAddView();
     }
-    private void addListener(){
-        mIbAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToAddFragment();
-            }
-        });
-    }
-    public void goToAddFragment(){
-        NavigationManager.gotoAddNoteActivity(this);
+    private void initActionBar(){
+        Toolbar toolbar = (Toolbar)findViewById(R.id.my_awesome_toolbar);
+        toolbar.setTitle("TodoList");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, 0, 0);
+        mDrawerToggle.syncState();
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
     private void addNoteList() {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -70,23 +64,9 @@ public class MainActivity extends BaseActivity<DefaultControl> {
         fragmentTransaction.commit();
     }
 
-    /**
-     * 添加位于底部Add按钮
-     */
-    private ImageButton addAddView(){
-        mIbAdd = new ImageButton(this);
-        mIbAdd.setBackgroundResource(R.drawable.selector_add);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.BOTTOM|Gravity.RIGHT;
-        params.bottomMargin = 20;
-        params.rightMargin = 20;
-        mIbAdd.setLayoutParams(params);
-        ((ViewGroup) getWindow().getDecorView()).addView(mIbAdd);
-        return mIbAdd;
-    }
     private void initDrawerToggle() {
         mDrawerToggle = new ActionBarDrawerToggle(
-                this, mDlMainContainer,
+                this, mDrawerLayout,
                 R.string.abc_action_bar_home_description,
                 R.string.abc_action_bar_up_description) {
             @Override
@@ -119,7 +99,6 @@ public class MainActivity extends BaseActivity<DefaultControl> {
         }
         return super.onOptionsItemSelected(item);
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

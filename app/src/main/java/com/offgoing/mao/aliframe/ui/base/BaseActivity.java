@@ -23,6 +23,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.offgoing.mao.aliframe.R;
 import com.offgoing.mao.aliframe.annotation.view.EventListener;
 import com.offgoing.mao.aliframe.annotation.view.Select;
 import com.offgoing.mao.aliframe.annotation.view.ViewInject;
@@ -35,6 +36,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -207,8 +209,13 @@ public abstract class BaseActivity<T extends BaseControl> extends ActionBarActiv
 		Click,LongClick,ItemClick,itemLongClick
 	}
 	public void initActionBar(boolean displayHomeAsUpEnabled,int title){
-        ActionBar actionBar =  getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(displayHomeAsUpEnabled);
-        actionBar.setTitle(title);
+//        ActionBar actionBar =  getSupportActionBar();
+//        actionBar.setDisplayHomeAsUpEnabled(displayHomeAsUpEnabled);
+//        actionBar.setTitle(title);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.my_awesome_toolbar);
+        if(toolbar==null)return;
+        toolbar.setTitle(title);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(displayHomeAsUpEnabled);
     }
 }

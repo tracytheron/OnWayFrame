@@ -33,7 +33,8 @@
             android:label="@string/title_activity_note_detail" >
         </activity>
         <activity
-            android:name=".ui.activity.AddOrEditNoteActivity">
+            android:name=".ui.activity.AddOrEditNoteActivity"
+            android:windowSoftInputMode="stateHidden">
         </activity>
     </application>
 

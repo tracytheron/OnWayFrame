@@ -15,7 +15,7 @@ public class NavigationManager {
         Intent intent = new Intent(context,AddOrEditNoteActivity.class);
         context.startActivityForResult(intent,1);
     }
-    public static void gotEditNoteActivity(Activity context,Note note){
+    public static void gotoEditNoteActivity(Activity context,Note note){
         Intent intent = new Intent(context,AddOrEditNoteActivity.class);
         intent.putExtra("note",note);
         context.startActivityForResult(intent,1);

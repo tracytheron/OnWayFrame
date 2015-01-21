@@ -3,9 +3,15 @@ package com.offgoing.mao.aliframe.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -35,6 +41,26 @@ public class AddOrEditNoteActivity extends BaseActivity<DefaultControl> {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_add_note);
+        ViewGroup viewGroup = (ViewGroup) getWindow().getDecorView();
+        int childCount = viewGroup.getChildCount();
+        Log.i("----","childCount:"+childCount);
+        View roorView = viewGroup.getChildAt(0);
+
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0,1);
+        alphaAnimation.setDuration(1000);
+
+        ScaleAnimation scaleAnimation = new ScaleAnimation(
+                0.0f, 0.0f,
+                0.0f, 1.4f,
+                Animation.ABSOLUTE, 0.5f,
+                Animation.ABSOLUTE, 0.5f);
+        scaleAnimation.setDuration(1000);
+
+        AnimationSet animationSet = new AnimationSet(true);
+        animationSet.addAnimation(alphaAnimation);
+        animationSet.addAnimation(scaleAnimation);
+
+        roorView.setAnimation(animationSet);
         ButterKnife.inject(this);
         initView();
     }
